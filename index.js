@@ -28,7 +28,9 @@ const client = new tmi.Client({
     channels: [config.channel]
 });
 
-client.connect();
+client.connect().catch(err => {
+    console.error('Bot connection failed:', err);
+});
 
 // when someone types in chat
 client.on('message', (channel, tags, message, self) => {
