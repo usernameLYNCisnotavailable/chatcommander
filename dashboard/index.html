@@ -3,200 +3,670 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ChatCommander Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
+<title>ChatCommander</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg: #020408;
-    --accent: #00f5c4;
-    --text: #e0eaf5;
-    --muted: #3a4a5c;
-    --card: rgba(10, 20, 35, 0.85);
-    --border: rgba(0, 245, 196, 0.15);
+    --bg: #080808;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.08);
+    --text: #f0f0f0;
+    --muted: rgba(255,255,255,0.3);
+    --holo-1: #e8e0ff;
+    --holo-2: #ffd6f0;
+    --holo-3: #d0f0ff;
+    --holo-4: #f0ffd6;
+    --silver: rgba(255,255,255,0.85);
   }
 
-  body {
+  html, body {
+    height: 100%;
     background: var(--bg);
     color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    padding: 40px;
+    font-family: 'DM Mono', monospace;
+    overflow: hidden;
   }
 
-  h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 3rem;
-    letter-spacing: 4px;
-    color: var(--text);
-    margin-bottom: 8px;
+  /* Holographic background */
+  .holo-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(180,160,255,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 80%, rgba(255,180,220,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 60% 10%, rgba(160,220,255,0.05) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 30% at 10% 80%, rgba(200,255,180,0.04) 0%, transparent 60%);
+    animation: holo-shift 8s ease-in-out infinite alternate;
   }
 
-  h1 span { color: var(--accent); }
-
-  .subtitle {
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    color: var(--muted);
-    margin-bottom: 48px;
+  @keyframes holo-shift {
+    0% { opacity: 0.8; filter: hue-rotate(0deg); }
+    100% { opacity: 1; filter: hue-rotate(30deg); }
   }
 
-  .grid {
+  /* Grain */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* Holographic lines */
+  .holo-lines {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 80px,
+      rgba(255,255,255,0.012) 80px,
+      rgba(255,255,255,0.012) 81px
+    );
+    pointer-events: none;
+    animation: lines-move 20s linear infinite;
+  }
+
+  @keyframes lines-move {
+    from { background-position: 0 0; }
+    to { background-position: 200px 200px; }
+  }
+
+  /* Layout */
+  .app {
+    position: relative;
+    z-index: 2;
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 32px;
-    max-width: 1100px;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: 60px 1fr;
+    height: 100vh;
   }
 
-  .panel {
-    background: var(--card);
-    border: 1px solid var(--border);
-    padding: 32px;
-    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
-  }
-
-  .panel-title {
-    font-size: 0.65rem;
-    letter-spacing: 4px;
-    color: var(--accent);
-    margin-bottom: 24px;
-    padding-bottom: 12px;
+  /* Header */
+  .header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
     border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.8);
+    backdrop-filter: blur(20px);
   }
 
-  label {
-    display: block;
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.5) 50%, #fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+  }
+
+  .logo::after {
+    content: 'CHAT COMMANDER';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--holo-1), var(--holo-2), var(--holo-3), var(--holo-4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    transition: opacity 0.4s;
+    background-size: 200%;
+    animation: holo-text 3s linear infinite;
+  }
+
+  .logo:hover::after { opacity: 1; }
+
+  @keyframes holo-text {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #4fffb0;
+    box-shadow: 0 0 8px #4fffb0;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 4px #4fffb0; }
+    50% { box-shadow: 0 0 12px #4fffb0, 0 0 24px rgba(79,255,176,0.3); }
+  }
+
+  .status-text {
     font-size: 0.6rem;
     letter-spacing: 3px;
     color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .version {
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.15);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: rgba(8,8,8,0.6);
+    backdrop-filter: blur(20px);
+  }
+
+  .nav-label {
+    font-size: 0.55rem;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+    padding: 0 12px;
     margin-bottom: 8px;
     margin-top: 16px;
   }
+  .nav-label:first-child { margin-top: 0; }
 
-  input {
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+    text-decoration: none;
+  }
+
+  .nav-item:hover {
+    background: rgba(255,255,255,0.04);
+    color: var(--text);
+    border-color: var(--border);
+  }
+
+  .nav-item.active {
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    border-color: rgba(255,255,255,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(232,224,255,0.06), rgba(255,214,240,0.06), rgba(208,240,255,0.06));
+    animation: holo-shift 4s ease-in-out infinite alternate;
+  }
+
+  .nav-icon { font-size: 0.9rem; opacity: 0.7; }
+
+  /* Main content */
+  .main {
+    padding: 32px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .main::-webkit-scrollbar { width: 4px; }
+  .main::-webkit-scrollbar-track { background: transparent; }
+  .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+  /* Page title */
+  .page-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.4));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-sub {
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  }
+
+  .card-holo {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+      rgba(232,224,255,0.03) 0%,
+      transparent 40%,
+      rgba(255,214,240,0.03) 60%,
+      transparent 80%,
+      rgba(208,240,255,0.03) 100%
+    );
+    border-radius: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .card:hover .card-holo { opacity: 1; }
+
+  .card-title {
+    font-size: 0.6rem;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.3);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: linear-gradient(90deg, var(--holo-1), var(--holo-3));
+  }
+
+  /* Form */
+  .form-group { margin-bottom: 16px; }
+
+  .form-label {
+    display: block;
+    font-size: 0.58rem;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .form-input {
     width: 100%;
     background: rgba(0,0,0,0.4);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
     color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.85rem;
-    padding: 12px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    padding: 11px 14px;
     outline: none;
-    transition: border-color 0.2s;
-  }
-
-  input:focus { border-color: var(--accent); }
-
-  button {
-    width: 100%;
-    margin-top: 24px;
-    padding: 14px;
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 0.75rem;
-    letter-spacing: 3px;
-    cursor: pointer;
-    font-weight: 700;
     transition: all 0.2s;
-    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
   }
 
-  button:hover { background: #fff; }
+  .form-input::placeholder { color: rgba(255,255,255,0.15); }
 
-  .command-list { display: flex; flex-direction: column; gap: 12px; }
+  .form-input:focus {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.03);
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.04),
+                inset 0 0 20px rgba(232,224,255,0.02);
+  }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    padding: 13px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg,
+      rgba(232,224,255,0.1),
+      rgba(255,214,240,0.1),
+      rgba(208,240,255,0.1),
+      rgba(240,255,214,0.1)
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+    background-size: 300%;
+    animation: holo-btn 3s linear infinite;
+  }
+
+  .btn:hover {
+    border-color: rgba(255,255,255,0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .btn:hover::before { opacity: 1; }
+
+  @keyframes holo-btn {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+
+  /* Command list */
+  .command-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 520px;
+    overflow-y: auto;
+  }
+
+  .command-list::-webkit-scrollbar { width: 3px; }
+  .command-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
 
   .command-item {
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--border);
-    padding: 16px 20px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    transition: border-color 0.2s;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    gap: 12px;
   }
 
-  .command-item:hover { border-color: rgba(0,245,196,0.4); }
+  .command-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--holo-1), var(--holo-2), var(--holo-3));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
 
-  .command-info { flex: 1; }
+  .command-item:hover {
+    background: rgba(255,255,255,0.03);
+    border-color: rgba(255,255,255,0.1);
+    transform: translateX(2px);
+  }
+
+  .command-item:hover::before { opacity: 1; }
+
+  .command-info { flex: 1; min-width: 0; }
 
   .command-name {
-    font-size: 0.9rem;
-    color: var(--accent);
-    margin-bottom: 4px;
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 3px;
+    font-weight: 500;
   }
 
   .command-response {
-    font-size: 0.7rem;
-    color: var(--muted);
+    font-size: 0.65rem;
+    color: rgba(255,255,255,0.25);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 400px;
   }
 
   .delete-btn {
     width: auto;
-    margin: 0;
-    padding: 6px 16px;
+    padding: 5px 12px;
     background: transparent;
-    color: #ff3366;
-    border: 1px solid rgba(255,51,102,0.3);
-    font-size: 0.6rem;
-    clip-path: none;
-    margin-left: 16px;
+    border: 1px solid rgba(255,80,80,0.2);
+    border-radius: 4px;
+    color: rgba(255,80,80,0.5);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    margin: 0;
   }
 
-  .delete-btn:hover { background: rgba(255,51,102,0.1); color: #ff3366; }
-
-  .toast {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    background: var(--accent);
-    color: var(--bg);
-    padding: 12px 24px;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
+  .delete-btn::before { display: none; }
+  .delete-btn:hover {
+    background: rgba(255,80,80,0.08);
+    border-color: rgba(255,80,80,0.4);
+    color: rgba(255,80,80,0.8);
+    transform: none;
+    box-shadow: none;
   }
-
-  .toast.show { opacity: 1; }
 
   .empty {
-    font-size: 0.7rem;
-    color: var(--muted);
     text-align: center;
-    padding: 32px;
+    padding: 40px 20px;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.12);
+    text-transform: uppercase;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  }
+
+  .stat-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, rgba(255,255,255,0.5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label {
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: rgba(20,20,20,0.95);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 0.65rem;
     letter-spacing: 2px;
+    color: rgba(255,255,255,0.7);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Holographic shimmer on hover for entire card */
+  @keyframes holo-card {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
   }
 </style>
 </head>
 <body>
 
-<h1>CHAT<span>COMMANDER</span></h1>
-<div class="subtitle">// COMMAND DASHBOARD</div>
+<div class="holo-bg"></div>
+<div class="grain"></div>
+<div class="holo-lines"></div>
 
-<div class="grid">
-  <div class="panel">
-    <div class="panel-title">// ADD COMMAND</div>
-    <label>COMMAND</label>
-    <input type="text" id="commandInput" placeholder="!yourcommand" />
-    <label>RESPONSE</label>
-    <input type="text" id="responseInput" placeholder="What the bot says..." />
-    <button onclick="addCommand()">ADD COMMAND</button>
-  </div>
-
-  <div class="panel">
-    <div class="panel-title">// ACTIVE COMMANDS</div>
-    <div class="command-list" id="commandList">
-      <div class="empty">LOADING...</div>
+<div class="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">CHAT COMMANDER</div>
+    <div class="header-right">
+      <div class="status-dot"></div>
+      <div class="status-text">Connected</div>
+      <div class="version">v1.0.0</div>
     </div>
-  </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="nav-label">Menu</div>
+    <div class="nav-item active">
+      <span class="nav-icon">⌘</span> Commands
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">◈</span> Settings
+    </div>
+    <div class="nav-label">Bot</div>
+    <div class="nav-item">
+      <span class="nav-icon">◉</span> Activity Log
+    </div>
+    <div class="nav-item">
+      <span class="nav-icon">◌</span> Channel Info
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Commands</div>
+        <div class="page-sub">Manage your chat commands</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total Commands</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">!</div>
+        <div class="stat-label">Prefix</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">∞</div>
+        <div class="stat-label">Triggers / Day</div>
+      </div>
+    </div>
+
+    <!-- Content grid -->
+    <div class="content-grid">
+      <!-- Add command -->
+      <div class="card">
+        <div class="card-holo"></div>
+        <div class="card-title">Add Command</div>
+        <div class="form-group">
+          <label class="form-label">Command</label>
+          <input class="form-input" type="text" id="commandInput" placeholder="!yourcommand" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Response</label>
+          <input class="form-input" type="text" id="responseInput" placeholder="What the bot says..." />
+        </div>
+        <button class="btn" onclick="addCommand()">Add Command</button>
+      </div>
+
+      <!-- Command list -->
+      <div class="card">
+        <div class="card-holo"></div>
+        <div class="card-title">Active Commands</div>
+        <div class="command-list" id="commandList">
+          <div class="empty">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </main>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -206,10 +676,12 @@
     const res = await fetch('/api/commands');
     const commands = await res.json();
     const list = document.getElementById('commandList');
-
     const keys = Object.keys(commands);
+
+    document.getElementById('statTotal').textContent = keys.length;
+
     if (keys.length === 0) {
-      list.innerHTML = '<div class="empty">NO COMMANDS YET</div>';
+      list.innerHTML = '<div class="empty">No commands yet</div>';
       return;
     }
 
@@ -219,7 +691,7 @@
           <div class="command-name">${cmd}</div>
           <div class="command-response">${commands[cmd].response}</div>
         </div>
-        <button class="delete-btn" onclick="deleteCommand('${cmd}')">DELETE</button>
+        <button class="delete-btn" onclick="deleteCommand('${cmd}')">Delete</button>
       </div>
     `).join('');
   }
@@ -228,15 +700,8 @@
     const command = document.getElementById('commandInput').value.trim();
     const response = document.getElementById('responseInput').value.trim();
 
-    if (!command || !response) {
-      showToast('FILL IN BOTH FIELDS');
-      return;
-    }
-
-    if (!command.startsWith('!')) {
-      showToast('COMMAND MUST START WITH !');
-      return;
-    }
+    if (!command || !response) { showToast('Fill in both fields'); return; }
+    if (!command.startsWith('!')) { showToast('Command must start with !'); return; }
 
     await fetch('/api/commands', {
       method: 'POST',
@@ -246,23 +711,21 @@
 
     document.getElementById('commandInput').value = '';
     document.getElementById('responseInput').value = '';
-    showToast('COMMAND ADDED');
+    showToast('Command added');
     loadCommands();
   }
 
   async function deleteCommand(cmd) {
-    await fetch(`/api/commands/${encodeURIComponent(cmd)}`, {
-      method: 'DELETE'
-    });
-    showToast('COMMAND DELETED');
+    await fetch(`/api/commands/${encodeURIComponent(cmd)}`, { method: 'DELETE' });
+    showToast('Command deleted');
     loadCommands();
   }
 
   function showToast(msg) {
-    const toast = document.getElementById('toast');
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 2500);
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
   }
 
   loadCommands();
