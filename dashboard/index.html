@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatCommander Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #020408;
+    --accent: #00f5c4;
+    --text: #e0eaf5;
+    --muted: #3a4a5c;
+    --card: rgba(10, 20, 35, 0.85);
+    --border: rgba(0, 245, 196, 0.15);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    padding: 40px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 4px;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 48px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 32px;
+    max-width: 1100px;
+  }
+
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 32px;
+    clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  }
+
+  .panel-title {
+    font-size: 0.65rem;
+    letter-spacing: 4px;
+    color: var(--accent);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  label {
+    display: block;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    margin-top: 16px;
+  }
+
+  input {
+    width: 100%;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.85rem;
+    padding: 12px 16px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus { border-color: var(--accent); }
+
+  button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  button:hover { background: #fff; }
+
+  .command-list { display: flex; flex-direction: column; gap: 12px; }
+
+  .command-item {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.2s;
+  }
+
+  .command-item:hover { border-color: rgba(0,245,196,0.4); }
+
+  .command-info { flex: 1; }
+
+  .command-name {
+    font-size: 0.9rem;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+
+  .command-response {
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+  }
+
+  .delete-btn {
+    width: auto;
+    margin: 0;
+    padding: 6px 16px;
+    background: transparent;
+    color: #ff3366;
+    border: 1px solid rgba(255,51,102,0.3);
+    font-size: 0.6rem;
+    clip-path: none;
+    margin-left: 16px;
+  }
+
+  .delete-btn:hover { background: rgba(255,51,102,0.1); color: #ff3366; }
+
+  .toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 12px 24px;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .empty {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 32px;
+    letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<h1>CHAT<span>COMMANDER</span></h1>
+<div class="subtitle">// COMMAND DASHBOARD</div>
+
+<div class="grid">
+  <div class="panel">
+    <div class="panel-title">// ADD COMMAND</div>
+    <label>COMMAND</label>
+    <input type="text" id="commandInput" placeholder="!yourcommand" />
+    <label>RESPONSE</label>
+    <input type="text" id="responseInput" placeholder="What the bot says..." />
+    <button onclick="addCommand()">ADD COMMAND</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">// ACTIVE COMMANDS</div>
+    <div class="command-list" id="commandList">
+      <div class="empty">LOADING...</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  async function loadCommands() {
+    const res = await fetch('/api/commands');
+    const commands = await res.json();
+    const list = document.getElementById('commandList');
+
+    const keys = Object.keys(commands);
+    if (keys.length === 0) {
+      list.innerHTML = '<div class="empty">NO COMMANDS YET</div>';
+      return;
+    }
+
+    list.innerHTML = keys.map(cmd => `
+      <div class="command-item">
+        <div class="command-info">
+          <div class="command-name">${cmd}</div>
+          <div class="command-response">${commands[cmd].response}</div>
+        </div>
+        <button class="delete-btn" onclick="deleteCommand('${cmd}')">DELETE</button>
+      </div>
+    `).join('');
+  }
+
+  async function addCommand() {
+    const command = document.getElementById('commandInput').value.trim();
+    const response = document.getElementById('responseInput').value.trim();
+
+    if (!command || !response) {
+      showToast('FILL IN BOTH FIELDS');
+      return;
+    }
+
+    if (!command.startsWith('!')) {
+      showToast('COMMAND MUST START WITH !');
+      return;
+    }
+
+    await fetch('/api/commands', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ command, response })
+    });
+
+    document.getElementById('commandInput').value = '';
+    document.getElementById('responseInput').value = '';
+    showToast('COMMAND ADDED');
+    loadCommands();
+  }
+
+  async function deleteCommand(cmd) {
+    await fetch(`/api/commands/${encodeURIComponent(cmd)}`, {
+      method: 'DELETE'
+    });
+    showToast('COMMAND DELETED');
+    loadCommands();
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
+  loadCommands();
+</script>
+</body>
+</html>
