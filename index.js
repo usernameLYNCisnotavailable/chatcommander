@@ -1,24 +1,30 @@
 const tmi = require('tmi.js');
 const fs = require('fs');
 const net = require('net');
+const path = require('path');
 
-function sendToReactor(command) {
+const dataDir = process.env.CHATCOMMANDER_DATA_PATH || '.';
+
+function sendToReactor(message) {
     const socket = new net.Socket();
     socket.connect(9000, '127.0.0.1', () => {
-        socket.write(command);
+        socket.write(message);
         socket.destroy();
     });
-    socket.on('error', () => {
-        // reactor not running, no problem
-    });
-}
-// load your commands from commands.json
-function getCommands() {
-    return JSON.parse(fs.readFileSync('./commands.json', 'utf8'));
+    socket.on('error', () => {});
 }
 
-// bot config — 
-const config = JSON.parse(fs.readFileSync('./config.json', 'utf8'));
+function getCommands() {
+    return JSON.parse(fs.readFileSync(path.join(dataDir, 'commands.json'), 'utf8'));
+}
+
+function getActions() {
+    const actionsPath = path.join(dataDir, 'actions.json');
+    if (!fs.existsSync(actionsPath)) return {};
+    return JSON.parse(fs.readFileSync(actionsPath, 'utf8'));
+}
+
+const config = JSON.parse(fs.readFileSync(path.join(dataDir, 'config.json'), 'utf8'));
 
 const client = new tmi.Client({
     identity: {
@@ -32,32 +38,66 @@ client.connect().catch(err => {
     console.error('Bot connection failed:', err);
 });
 
-// when someone types in chat
+// ---- Reply listener on port 9001 ----
+// C++ actions connect here to send messages back into chat
+const replyServer = net.createServer((socket) => {
+    let data = '';
+    socket.on('data', (chunk) => { data += chunk.toString(); });
+    socket.on('end', () => {
+        const msg = data.trim();
+        if (msg) {
+            console.log('[bot] Reply from action:', msg);
+            client.say('#' + config.channel.replace('#', ''), msg);
+        }
+    });
+    socket.on('error', () => {});
+});
+
+replyServer.listen(9001, '127.0.0.1', () => {
+    console.log('Bot reply listener running on port 9001');
+});
+
+// ---- Chat handler ----
 client.on('message', (channel, tags, message, self) => {
-    if (self) return; // ignore the bot talking to itself
+    if (self) return;
 
     const msg = message.trim().toLowerCase();
-    const username = tags['display-name'];
+    const username = tags['display-name'] || tags.username || '';
+    const command = msg.split(' ')[0];
+    const args = msg.split(' ').slice(1).join(' ');
 
     console.log(`${username}: ${message}`);
 
-    // check if message matches a command
- const commands = getCommands();
-if (commands[msg]) {
-    client.say(channel, commands[msg].response);
-    sendToReactor(msg);
-}
+    const commands = getCommands();
+    const actions = getActions();
 
-    // built in shoutout command
+    // Text commands
+    if (commands[command]) {
+        client.say(channel, commands[command].response);
+    }
+
+    // C++ actions — strip ! so "!time" matches action named "time"
+    const actionKey = command.startsWith('!') ? command.slice(1) : command;
+    if (actions[actionKey]) {
+        const reactorMsg = `COMMAND:${actionKey}:${username}:${message}:${args}`;
+        sendToReactor(reactorMsg);
+    }
+
+    // Built in shoutout
     if (msg.startsWith('!so ') || msg.startsWith('!shoutout ')) {
         const target = msg.split(' ')[1];
         client.say(channel, `🔥 Go check out ${target} over at twitch.tv/${target} !`);
     }
 
-    // built in commands list
+    // Built in commands list
     if (msg === '!commands') {
-        const list = Object.keys(commands).join(' | ');
-        client.say(channel, `Commands: ${list} | !so | !commands`);
+        const allCommands = [
+            ...Object.keys(commands),
+            ...Object.keys(actions).map(a => '!' + a),
+            '!so', '!commands'
+        ];
+        const unique = [...new Set(allCommands)];
+        client.say(channel, `Commands: ${unique.join(' | ')}`);
     }
 });
 

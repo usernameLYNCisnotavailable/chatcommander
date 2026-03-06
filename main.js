@@ -1,8 +1,11 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 
 let mainWindow;
+let botProcess = null;
+let reactorProcess = null;
 
 function getDataPath(file) {
     const userDataPath = app.getPath('userData');
@@ -16,15 +19,88 @@ function getDataPath(file) {
     return filePath;
 }
 
+function startReactor() {
+    const reactorPath = app.isPackaged
+        ? path.join(process.resourcesPath, 'reactor.exe')
+        : path.join(__dirname, 'reactor.exe');
+
+    if (!fs.existsSync(reactorPath)) {
+        console.log('reactor.exe not found at:', reactorPath);
+        return;
+    }
+
+    reactorProcess = spawn(reactorPath, [], {
+        cwd: path.dirname(reactorPath),
+        stdio: 'pipe'
+    });
+
+    reactorProcess.stdout.on('data', (data) => {
+        console.log('[reactor]', data.toString().trim());
+    });
+
+    reactorProcess.stderr.on('data', (data) => {
+        console.error('[reactor error]', data.toString().trim());
+    });
+
+    reactorProcess.on('exit', (code) => {
+        console.log('[reactor] exited with code', code);
+        reactorProcess = null;
+    });
+
+    console.log('Reactor started.');
+}
+
+function startBot() {
+    const botPath = app.isPackaged
+        ? path.join(process.resourcesPath, 'app.asar', 'index.js')
+        : path.join(__dirname, 'index.js');
+
+    const userDataPath = app.getPath('userData');
+
+    getDataPath('config.json');
+    getDataPath('commands.json');
+
+    const config = JSON.parse(fs.readFileSync(path.join(userDataPath, 'config.json'), 'utf8'));
+
+    if (!config.setupComplete) {
+        console.log('Setup not complete, bot will not start yet.');
+        return;
+    }
+
+    botProcess = spawn(process.execPath, [botPath], {
+        env: {
+            ...process.env,
+            CHATCOMMANDER_DATA_PATH: userDataPath
+        },
+        stdio: 'pipe'
+    });
+
+    botProcess.stdout.on('data', (data) => {
+        console.log('[bot]', data.toString().trim());
+    });
+
+    botProcess.stderr.on('data', (data) => {
+        console.error('[bot error]', data.toString().trim());
+    });
+
+    botProcess.on('exit', (code) => {
+        console.log('[bot] exited with code', code);
+        botProcess = null;
+    });
+
+    console.log('Bot started.');
+}
+
 function startServer() {
     const express = require('express');
     const axios = require('axios');
-
-   const appDir = __dirname;
+    const net = require('net');
+    const appDir = __dirname;
 
     const server = express();
-    server.use(express.json());
+    server.use(express.json({ limit: '10mb' }));
 
+    // ---- PAGES ----
     server.get('/test', (req, res) => res.send('working'));
 
     server.get('/', (req, res) => {
@@ -40,6 +116,7 @@ function startServer() {
         res.sendFile(path.join(appDir, 'setup.html'));
     });
 
+    // ---- AUTH ----
     server.get('/auth/twitch', (req, res) => {
         const url = `https://id.twitch.tv/oauth2/authorize?client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${encodeURIComponent(process.env.TWITCH_REDIRECT_URI)}&response_type=code&scope=chat:read+chat:edit`;
         res.redirect(url);
@@ -76,10 +153,14 @@ function startServer() {
         }
     });
 
+    // ---- SETUP ----
     server.post('/api/setup', (req, res) => {
         const { botUsername, token, channel, setupComplete } = req.body;
         const config = { botUsername, token, channel, setupComplete };
         fs.writeFileSync(getDataPath('config.json'), JSON.stringify(config, null, 4));
+        if (setupComplete && !botProcess) {
+            setTimeout(startBot, 1000);
+        }
         res.json({ success: true });
     });
 
@@ -88,6 +169,7 @@ function startServer() {
         res.json(config);
     });
 
+    // ---- COMMANDS ----
     server.get('/api/commands', (req, res) => {
         const commands = JSON.parse(fs.readFileSync(getDataPath('commands.json'), 'utf8'));
         res.json(commands);
@@ -109,6 +191,139 @@ function startServer() {
         res.json({ success: true });
     });
 
+    // ---- BOT STATUS ----
+    server.get('/api/bot-status', (req, res) => {
+        res.json({ running: botProcess !== null });
+    });
+
+    server.post('/api/bot-start', (req, res) => {
+        if (botProcess) return res.json({ success: false, message: 'Bot already running' });
+        startBot();
+        res.json({ success: true });
+    });
+
+    server.post('/api/bot-stop', (req, res) => {
+        if (botProcess) {
+            botProcess.kill();
+            botProcess = null;
+        }
+        res.json({ success: true });
+    });
+
+    // ---- ACTIONS ----
+    server.get('/api/actions', (req, res) => {
+        const p = getDataPath('actions.json');
+        if (!fs.existsSync(p)) fs.writeFileSync(p, '{}');
+        res.json(JSON.parse(fs.readFileSync(p, 'utf8')));
+    });
+
+    server.post('/api/actions/compile', (req, res) => {
+        const { name, code } = req.body;
+        const socket = new net.Socket();
+        let result = '';
+        socket.connect(9000, '127.0.0.1', () => {
+            socket.write(`COMPILE:${name}:${code}`);
+        });
+        socket.on('data', (data) => { result += data.toString(); });
+        socket.on('close', () => {
+            const p = getDataPath('actions.json');
+            const actions = JSON.parse(fs.readFileSync(p, 'utf8'));
+            if (actions[name]) {
+                const success = result.includes('COMPILE_RESULT:OK');
+                actions[name].compiled = success;
+                actions[name].code = code;
+                fs.writeFileSync(p, JSON.stringify(actions, null, 4));
+                if (success) {
+                    res.json({ success: true });
+                } else {
+                    const err = result.replace('COMPILE_RESULT:', '').replace('COMPILE_ERROR:', '');
+                    res.json({ success: false, error: err });
+                }
+            } else {
+                res.json({ success: false, error: 'Action not found' });
+            }
+        });
+        socket.on('error', () => {
+            res.json({ success: false, error: 'Reactor not running' });
+        });
+    });
+
+    server.post('/api/actions/run', (req, res) => {
+        const { name, username, message, args } = req.body;
+        const socket = new net.Socket();
+        socket.connect(9000, '127.0.0.1', () => {
+            socket.write(`RUN:${name}:${username}:${message}:${args}`);
+            socket.destroy();
+        });
+        socket.on('error', () => {});
+        res.json({ success: true });
+    });
+
+    server.post('/api/actions', (req, res) => {
+        const { name, trigger, code, compiled } = req.body;
+        const p = getDataPath('actions.json');
+        if (!fs.existsSync(p)) fs.writeFileSync(p, '{}');
+        const actions = JSON.parse(fs.readFileSync(p, 'utf8'));
+        actions[name] = { trigger, code, compiled: false };
+        fs.writeFileSync(p, JSON.stringify(actions, null, 4));
+        res.json({ success: true });
+    });
+
+    server.put('/api/actions/:name', (req, res) => {
+        const name = decodeURIComponent(req.params.name);
+        const { code } = req.body;
+        const p = getDataPath('actions.json');
+        const actions = JSON.parse(fs.readFileSync(p, 'utf8'));
+        if (actions[name]) actions[name].code = code;
+        fs.writeFileSync(p, JSON.stringify(actions, null, 4));
+        res.json({ success: true });
+    });
+
+    server.delete('/api/actions/:name', (req, res) => {
+        const name = decodeURIComponent(req.params.name);
+        const p = getDataPath('actions.json');
+        const actions = JSON.parse(fs.readFileSync(p, 'utf8'));
+        delete actions[name];
+        fs.writeFileSync(p, JSON.stringify(actions, null, 4));
+        res.json({ success: true });
+    });
+
+    // ---- GROUPS ----
+    server.get('/api/groups', (req, res) => {
+        const p = getDataPath('groups.json');
+        if (!fs.existsSync(p)) fs.writeFileSync(p, '{}');
+        res.json(JSON.parse(fs.readFileSync(p, 'utf8')));
+    });
+
+    server.post('/api/groups', (req, res) => {
+        const { name, actions } = req.body;
+        const p = getDataPath('groups.json');
+        if (!fs.existsSync(p)) fs.writeFileSync(p, '{}');
+        const groups = JSON.parse(fs.readFileSync(p, 'utf8'));
+        groups[name] = { actions: actions || [] };
+        fs.writeFileSync(p, JSON.stringify(groups, null, 4));
+        res.json({ success: true });
+    });
+
+    server.put('/api/groups/:name', (req, res) => {
+        const name = decodeURIComponent(req.params.name);
+        const p = getDataPath('groups.json');
+        const groups = JSON.parse(fs.readFileSync(p, 'utf8'));
+        groups[name] = req.body;
+        fs.writeFileSync(p, JSON.stringify(groups, null, 4));
+        res.json({ success: true });
+    });
+
+    server.delete('/api/groups/:name', (req, res) => {
+        const name = decodeURIComponent(req.params.name);
+        const p = getDataPath('groups.json');
+        const groups = JSON.parse(fs.readFileSync(p, 'utf8'));
+        delete groups[name];
+        fs.writeFileSync(p, JSON.stringify(groups, null, 4));
+        res.json({ success: true });
+    });
+
+    // ---- STATIC (must be last) ----
     server.use(express.static(path.join(appDir, 'dashboard')));
 
     server.listen(3000, () => {
@@ -148,10 +363,14 @@ app.whenReady().then(() => {
             : path.join(__dirname, '.env')
     });
     startServer();
+    startReactor();
+    startBot();
     createWindow();
 });
 
 app.on('window-all-closed', () => {
+    if (botProcess) botProcess.kill();
+    if (reactorProcess) reactorProcess.kill();
     if (process.platform !== 'darwin') app.quit();
 });
 

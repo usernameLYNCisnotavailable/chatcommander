@@ -29,7 +29,6 @@
     overflow: hidden;
   }
 
-  /* Holographic background */
   .holo-bg {
     position: fixed;
     inset: 0;
@@ -47,7 +46,6 @@
     100% { opacity: 1; filter: hue-rotate(30deg); }
   }
 
-  /* Grain */
   .grain {
     position: fixed;
     inset: 0;
@@ -57,7 +55,6 @@
     pointer-events: none;
   }
 
-  /* Holographic lines */
   .holo-lines {
     position: fixed;
     inset: 0;
@@ -78,7 +75,6 @@
     to { background-position: 200px 200px; }
   }
 
-  /* Layout */
   .app {
     position: relative;
     z-index: 2;
@@ -88,7 +84,6 @@
     height: 100vh;
   }
 
-  /* Header */
   .header {
     grid-column: 1 / -1;
     display: flex;
@@ -165,7 +160,6 @@
     color: rgba(255,255,255,0.15);
   }
 
-  /* Sidebar */
   .sidebar {
     border-right: 1px solid var(--border);
     padding: 24px 16px;
@@ -226,7 +220,6 @@
 
   .nav-icon { font-size: 0.9rem; opacity: 0.7; }
 
-  /* Main content */
   .main {
     padding: 32px;
     overflow-y: auto;
@@ -239,7 +232,10 @@
   .main::-webkit-scrollbar-track { background: transparent; }
   .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-  /* Page title */
+  /* Pages */
+  .page { display: none; flex-direction: column; gap: 24px; }
+  .page.active { display: flex; }
+
   .page-header {
     display: flex;
     align-items: flex-end;
@@ -265,7 +261,6 @@
     margin-top: 4px;
   }
 
-  /* Grid */
   .content-grid {
     display: grid;
     grid-template-columns: 340px 1fr;
@@ -273,7 +268,6 @@
     align-items: start;
   }
 
-  /* Cards */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -327,7 +321,6 @@
     background: linear-gradient(90deg, var(--holo-1), var(--holo-3));
   }
 
-  /* Form */
   .form-group { margin-bottom: 16px; }
 
   .form-label {
@@ -361,7 +354,6 @@
                 inset 0 0 20px rgba(232,224,255,0.02);
   }
 
-  /* Button */
   .btn {
     width: 100%;
     padding: 13px;
@@ -409,7 +401,26 @@
     100% { background-position: 300% 50%; }
   }
 
-  /* Command list */
+  .btn-sm {
+    width: auto;
+    padding: 8px 16px;
+    font-size: 0.62rem;
+    letter-spacing: 2px;
+    margin-top: 0;
+  }
+
+  .btn-green {
+    border-color: rgba(79,255,176,0.3);
+    color: rgba(79,255,176,0.8);
+  }
+  .btn-green:hover { border-color: rgba(79,255,176,0.6); }
+
+  .btn-red {
+    border-color: rgba(255,80,80,0.3);
+    color: rgba(255,80,80,0.7);
+  }
+  .btn-red:hover { border-color: rgba(255,80,80,0.5); }
+
   .command-list {
     display: flex;
     flex-direction: column;
@@ -505,7 +516,6 @@
     text-transform: uppercase;
   }
 
-  /* Stats row */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -548,6 +558,244 @@
     text-transform: uppercase;
   }
 
+  /* ---- ACTIONS PAGE ---- */
+
+  .actions-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 480px;
+    overflow-y: auto;
+  }
+
+  .action-list::-webkit-scrollbar { width: 3px; }
+  .action-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+  .action-item {
+    padding: 14px 16px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .action-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #d0f0ff, #e8e0ff);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .action-item:hover, .action-item.selected {
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.12);
+  }
+
+  .action-item:hover::before, .action-item.selected::before { opacity: 1; }
+
+  .action-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+
+  .action-item-name {
+    font-size: 0.82rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  .action-item-trigger {
+    font-size: 0.62rem;
+    color: rgba(208,240,255,0.5);
+    letter-spacing: 1px;
+  }
+
+  .action-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .action-status-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+  }
+
+  .status-compiled .action-status-dot { background: #4fffb0; box-shadow: 0 0 6px #4fffb0; }
+  .status-compiled { color: rgba(79,255,176,0.6); }
+  .status-uncompiled .action-status-dot { background: rgba(255,200,80,0.6); }
+  .status-uncompiled { color: rgba(255,200,80,0.5); }
+
+  /* Code editor area */
+  .editor-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0,0,0,0.5);
+  }
+
+  .editor-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.03);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .editor-lang {
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    color: rgba(208,240,255,0.4);
+    text-transform: uppercase;
+  }
+
+  .editor-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .code-editor {
+    width: 100%;
+    min-height: 260px;
+    background: transparent;
+    border: none;
+    color: #d0f0ff;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    padding: 16px;
+    outline: none;
+    resize: vertical;
+    tab-size: 4;
+  }
+
+  .compile-output {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 0.68rem;
+    line-height: 1.6;
+    letter-spacing: 0.5px;
+    display: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .compile-output.success {
+    display: block;
+    background: rgba(79,255,176,0.06);
+    border: 1px solid rgba(79,255,176,0.2);
+    color: rgba(79,255,176,0.8);
+  }
+
+  .compile-output.error {
+    display: block;
+    background: rgba(255,80,80,0.06);
+    border: 1px solid rgba(255,80,80,0.2);
+    color: rgba(255,120,120,0.9);
+  }
+
+  .compile-output.loading {
+    display: block;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* Groups */
+  .groups-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .group-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .group-header:hover { background: rgba(255,255,255,0.03); }
+
+  .group-name {
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .group-count {
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.05);
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+
+  .group-chevron {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.2);
+    transition: transform 0.2s;
+  }
+
+  .group-item.open .group-chevron { transform: rotate(90deg); }
+
+  .group-body {
+    display: none;
+    padding: 0 18px 14px;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .group-item.open .group-body { display: flex; }
+
+  .group-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 6px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.5);
+  }
+
   /* Toast */
   .toast {
     position: fixed;
@@ -568,12 +816,8 @@
     z-index: 100;
   }
 
-  .toast.show {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .toast.show { opacity: 1; transform: translateY(0); }
 
-  /* Holographic shimmer on hover for entire card */
   @keyframes holo-card {
     0% { background-position: 0% 50%; }
     100% { background-position: 200% 50%; }
@@ -591,8 +835,8 @@
   <header class="header">
     <div class="logo">CHAT COMMANDER</div>
     <div class="header-right">
-      <div class="status-dot"></div>
-      <div class="status-text">Connected</div>
+      <div class="status-dot" id="botDot"></div>
+      <div class="status-text" id="botStatusText">Checking...</div>
       <div class="version">v1.0.0</div>
     </div>
   </header>
@@ -600,91 +844,276 @@
   <!-- Sidebar -->
   <aside class="sidebar">
     <div class="nav-label">Menu</div>
-    <div class="nav-item active">
+    <div class="nav-item active" id="nav-commands" onclick="showPage('commands')">
       <span class="nav-icon">⌘</span> Commands
     </div>
-    <div class="nav-item">
-      <span class="nav-icon">◈</span> Settings
+    <div class="nav-item" id="nav-actions" onclick="showPage('actions')">
+      <span class="nav-icon">◈</span> Actions
+    </div>
+    <div class="nav-item" id="nav-groups" onclick="showPage('groups')">
+      <span class="nav-icon">⬡</span> Groups
     </div>
     <div class="nav-label">Bot</div>
-    <div class="nav-item">
-      <span class="nav-icon">◉</span> Activity Log
-    </div>
-    <div class="nav-item">
-      <span class="nav-icon">◌</span> Channel Info
+    <div class="nav-item" id="botToggleBtn" onclick="toggleBot()">
+      <span class="nav-icon" id="botToggleIcon">◌</span>
+      <span id="botToggleLabel">Start Bot</span>
     </div>
   </aside>
 
   <!-- Main -->
   <main class="main">
-    <div class="page-header">
-      <div>
-        <div class="page-title">Commands</div>
-        <div class="page-sub">Manage your chat commands</div>
-      </div>
-    </div>
 
-    <!-- Stats -->
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-value" id="statTotal">0</div>
-        <div class="stat-label">Total Commands</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">!</div>
-        <div class="stat-label">Prefix</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value">∞</div>
-        <div class="stat-label">Triggers / Day</div>
-      </div>
-    </div>
-
-    <!-- Content grid -->
-    <div class="content-grid">
-      <!-- Add command -->
-      <div class="card">
-        <div class="card-holo"></div>
-        <div class="card-title">Add Command</div>
-        <div class="form-group">
-          <label class="form-label">Command</label>
-          <input class="form-input" type="text" id="commandInput" placeholder="!yourcommand" />
+    <!-- COMMANDS PAGE -->
+    <div class="page active" id="page-commands">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Commands</div>
+          <div class="page-sub">Manage your chat commands</div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Response</label>
-          <input class="form-input" type="text" id="responseInput" placeholder="What the bot says..." />
-        </div>
-        <button class="btn" onclick="addCommand()">Add Command</button>
       </div>
-
-      <!-- Command list -->
-      <div class="card">
-        <div class="card-holo"></div>
-        <div class="card-title">Active Commands</div>
-        <div class="command-list" id="commandList">
-          <div class="empty">Loading...</div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Total Commands</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">!</div>
+          <div class="stat-label">Prefix</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">∞</div>
+          <div class="stat-label">Triggers / Day</div>
+        </div>
+      </div>
+      <div class="content-grid">
+        <div class="card">
+          <div class="card-holo"></div>
+          <div class="card-title">Add Command</div>
+          <div class="form-group">
+            <label class="form-label">Command</label>
+            <input class="form-input" type="text" id="commandInput" placeholder="!yourcommand" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Response</label>
+            <input class="form-input" type="text" id="responseInput" placeholder="What the bot says..." />
+          </div>
+          <button class="btn" onclick="addCommand()">Add Command</button>
+        </div>
+        <div class="card">
+          <div class="card-holo"></div>
+          <div class="card-title">Active Commands</div>
+          <div class="command-list" id="commandList">
+            <div class="empty">Loading...</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- ACTIONS PAGE -->
+    <div class="page" id="page-actions">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Actions</div>
+          <div class="page-sub">Write C++ actions triggered by chat</div>
+        </div>
+      </div>
+
+      <div class="actions-layout">
+        <!-- Left: action list + create -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="card">
+            <div class="card-holo"></div>
+            <div class="card-title">New Action</div>
+            <div class="form-group">
+              <label class="form-label">Action Name</label>
+              <input class="form-input" type="text" id="actionNameInput" placeholder="myaction" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Trigger Command</label>
+              <input class="form-input" type="text" id="actionTriggerInput" placeholder="!command" />
+            </div>
+            <button class="btn" onclick="createAction()">Create Action</button>
+          </div>
+
+          <div class="card" style="padding:20px;">
+            <div class="card-holo"></div>
+            <div class="card-title">Your Actions</div>
+            <div class="action-list" id="actionList">
+              <div class="empty">No actions yet</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: editor -->
+        <div class="card" id="editorCard" style="display:none;">
+          <div class="card-holo"></div>
+          <div class="card-title" id="editorTitle">Editor</div>
+
+          <div class="editor-wrap">
+            <div class="editor-toolbar">
+              <span class="editor-lang">C++</span>
+              <div class="editor-actions">
+                <button class="btn btn-sm btn-green" onclick="compileAction()">Save &amp; Compile</button>
+                <button class="btn btn-sm" onclick="testAction()">Test Run</button>
+                <button class="btn btn-sm btn-red" onclick="deleteAction()">Delete</button>
+              </div>
+            </div>
+            <textarea class="code-editor" id="codeEditor" spellcheck="false"
+              placeholder="// username, message, and args are available as std::string variables
+// Example:
+std::cout << &quot;Hello &quot; << username << &quot;!&quot; << std::endl;
+MessageBoxA(NULL, username.c_str(), &quot;ChatCommander&quot;, MB_OK);
+"></textarea>
+          </div>
+
+          <div class="compile-output" id="compileOutput"></div>
+
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.06);">
+            <div class="form-label" style="margin-bottom:10px;">Available Variables in your C++ code</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:0.65rem;padding:4px 10px;border:1px solid rgba(208,240,255,0.15);border-radius:4px;color:rgba(208,240,255,0.5);">username</span>
+              <span style="font-size:0.65rem;padding:4px 10px;border:1px solid rgba(208,240,255,0.15);border-radius:4px;color:rgba(208,240,255,0.5);">message</span>
+              <span style="font-size:0.65rem;padding:4px 10px;border:1px solid rgba(208,240,255,0.15);border-radius:4px;color:rgba(208,240,255,0.5);">args</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: empty state -->
+        <div id="editorEmpty" style="display:flex;align-items:center;justify-content:center;height:300px;">
+          <div style="text-align:center;">
+            <div style="font-size:2rem;margin-bottom:12px;opacity:0.15;">◈</div>
+            <div style="font-size:0.6rem;letter-spacing:3px;color:rgba(255,255,255,0.15);text-transform:uppercase;">Select an action to edit</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GROUPS PAGE -->
+    <div class="page" id="page-groups">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Groups</div>
+          <div class="page-sub">Organise and chain actions together</div>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <!-- Create group -->
+        <div class="card">
+          <div class="card-holo"></div>
+          <div class="card-title">New Group</div>
+          <div class="form-group">
+            <label class="form-label">Group Name</label>
+            <input class="form-input" type="text" id="groupNameInput" placeholder="Sound Effects" />
+          </div>
+          <button class="btn" onclick="createGroup()">Create Group</button>
+
+          <div style="margin-top:20px;border-top:1px solid rgba(255,255,255,0.06);padding-top:20px;">
+            <div class="card-title" style="margin-bottom:14px;">Add Action to Group</div>
+            <div class="form-group">
+              <label class="form-label">Group</label>
+              <select class="form-input" id="groupSelectForAction" style="cursor:pointer;">
+                <option value="">Select group...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Action</label>
+              <select class="form-input" id="actionSelectForGroup" style="cursor:pointer;">
+                <option value="">Select action...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">On Fail → Run Action (optional)</label>
+              <select class="form-input" id="failActionSelect" style="cursor:pointer;">
+                <option value="">None</option>
+              </select>
+            </div>
+            <button class="btn" onclick="addActionToGroup()">Add to Group</button>
+          </div>
+        </div>
+
+        <!-- Group list -->
+        <div>
+          <div class="groups-layout" id="groupList">
+            <div class="empty" style="padding:40px;text-align:center;font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.12);text-transform:uppercase;">No groups yet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+  // ---- NAV ----
+  function showPage(name) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('page-' + name).classList.add('active');
+    document.getElementById('nav-' + name).classList.add('active');
+    if (name === 'groups') refreshGroupSelects();
+  }
+
+  // ---- TOAST ----
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  // ---- BOT STATUS ----
+  let botRunning = false;
+
+  async function checkBotStatus() {
+    try {
+      const res = await fetch('/api/bot-status');
+      const data = await res.json();
+      botRunning = data.running;
+      const dot = document.getElementById('botDot');
+      const statusText = document.getElementById('botStatusText');
+      const toggleLabel = document.getElementById('botToggleLabel');
+      const toggleIcon = document.getElementById('botToggleIcon');
+      if (botRunning) {
+        dot.style.background = '#4fffb0';
+        dot.style.boxShadow = '0 0 8px #4fffb0';
+        statusText.textContent = 'Bot Online';
+        toggleLabel.textContent = 'Stop Bot';
+        toggleIcon.textContent = '◉';
+      } else {
+        dot.style.background = 'rgba(255,255,255,0.2)';
+        dot.style.boxShadow = 'none';
+        statusText.textContent = 'Bot Offline';
+        toggleLabel.textContent = 'Start Bot';
+        toggleIcon.textContent = '◌';
+      }
+    } catch(e) {}
+  }
+
+  async function toggleBot() {
+    if (botRunning) {
+      await fetch('/api/bot-stop', { method: 'POST' });
+      showToast('Bot stopped');
+    } else {
+      await fetch('/api/bot-start', { method: 'POST' });
+      showToast('Bot starting...');
+    }
+    setTimeout(checkBotStatus, 1000);
+  }
+
+  // ---- COMMANDS ----
   async function loadCommands() {
     const res = await fetch('/api/commands');
     const commands = await res.json();
     const list = document.getElementById('commandList');
     const keys = Object.keys(commands);
-
     document.getElementById('statTotal').textContent = keys.length;
-
     if (keys.length === 0) {
       list.innerHTML = '<div class="empty">No commands yet</div>';
       return;
     }
-
     list.innerHTML = keys.map(cmd => `
       <div class="command-item">
         <div class="command-info">
@@ -699,16 +1128,13 @@
   async function addCommand() {
     const command = document.getElementById('commandInput').value.trim();
     const response = document.getElementById('responseInput').value.trim();
-
     if (!command || !response) { showToast('Fill in both fields'); return; }
     if (!command.startsWith('!')) { showToast('Command must start with !'); return; }
-
     await fetch('/api/commands', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ command, response })
     });
-
     document.getElementById('commandInput').value = '';
     document.getElementById('responseInput').value = '';
     showToast('Command added');
@@ -721,14 +1147,251 @@
     loadCommands();
   }
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
+  // ---- ACTIONS ----
+  let currentAction = null;
+  let actionsCache = {};
+
+  async function loadActions() {
+    const res = await fetch('/api/actions');
+    actionsCache = await res.json();
+    renderActionList();
   }
 
+  function renderActionList() {
+    const list = document.getElementById('actionList');
+    const keys = Object.keys(actionsCache);
+    if (keys.length === 0) {
+      list.innerHTML = '<div class="empty">No actions yet</div>';
+      return;
+    }
+    list.innerHTML = keys.map(name => {
+      const a = actionsCache[name];
+      const compiled = a.compiled ? 'status-compiled' : 'status-uncompiled';
+      const compiledLabel = a.compiled ? 'Compiled' : 'Not compiled';
+      return `
+        <div class="action-item ${currentAction === name ? 'selected' : ''}" onclick="selectAction('${name}')">
+          <div class="action-item-header">
+            <span class="action-item-name">${name}</span>
+            <span class="action-item-trigger">${a.trigger || ''}</span>
+          </div>
+          <div class="action-status ${compiled}">
+            <div class="action-status-dot"></div>
+            ${compiledLabel}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function selectAction(name) {
+    currentAction = name;
+    const a = actionsCache[name];
+    document.getElementById('editorCard').style.display = 'block';
+    document.getElementById('editorEmpty').style.display = 'none';
+    document.getElementById('editorTitle').textContent = name + ' — ' + (a.trigger || '');
+    document.getElementById('codeEditor').value = a.code || '';
+    document.getElementById('compileOutput').className = 'compile-output';
+    document.getElementById('compileOutput').textContent = '';
+    renderActionList();
+  }
+
+  async function createAction() {
+    const name = document.getElementById('actionNameInput').value.trim().replace(/\s+/g, '_');
+    const trigger = document.getElementById('actionTriggerInput').value.trim();
+    if (!name) { showToast('Enter an action name'); return; }
+    if (!trigger.startsWith('!')) { showToast('Trigger must start with !'); return; }
+    await fetch('/api/actions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, trigger, code: '// Write your C++ code here\nstd::cout << "Action fired by " << username << std::endl;', compiled: false })
+    });
+    document.getElementById('actionNameInput').value = '';
+    document.getElementById('actionTriggerInput').value = '';
+    showToast('Action created');
+    await loadActions();
+    selectAction(name);
+  }
+
+  async function compileAction() {
+    if (!currentAction) return;
+    const code = document.getElementById('codeEditor').value;
+    const output = document.getElementById('compileOutput');
+    output.className = 'compile-output loading';
+    output.textContent = 'Compiling...';
+
+    // Save code first
+    await fetch(`/api/actions/${encodeURIComponent(currentAction)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code })
+    });
+
+    // Send to reactor to compile
+    const res = await fetch('/api/actions/compile', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentAction, code })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      output.className = 'compile-output success';
+      output.textContent = '✓ Compiled successfully';
+      actionsCache[currentAction].compiled = true;
+      actionsCache[currentAction].code = code;
+      renderActionList();
+      showToast('Compiled!');
+    } else {
+      output.className = 'compile-output error';
+      output.textContent = data.error || 'Compile failed';
+      showToast('Compile error');
+    }
+  }
+
+  async function testAction() {
+    if (!currentAction) return;
+    await fetch('/api/actions/run', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: currentAction, username: 'TestUser', message: 'test', args: '' })
+    });
+    showToast('Action fired');
+  }
+
+  async function deleteAction() {
+    if (!currentAction) return;
+    await fetch(`/api/actions/${encodeURIComponent(currentAction)}`, { method: 'DELETE' });
+    currentAction = null;
+    document.getElementById('editorCard').style.display = 'none';
+    document.getElementById('editorEmpty').style.display = 'flex';
+    showToast('Action deleted');
+    loadActions();
+  }
+
+  // ---- GROUPS ----
+  let groupsCache = {};
+
+  async function loadGroups() {
+    const res = await fetch('/api/groups');
+    groupsCache = await res.json();
+    renderGroups();
+  }
+
+  function renderGroups() {
+    const list = document.getElementById('groupList');
+    const keys = Object.keys(groupsCache);
+    if (keys.length === 0) {
+      list.innerHTML = '<div class="empty" style="padding:40px;text-align:center;font-size:0.65rem;letter-spacing:3px;color:rgba(255,255,255,0.12);text-transform:uppercase;">No groups yet</div>';
+      return;
+    }
+    list.innerHTML = keys.map(gname => {
+      const g = groupsCache[gname];
+      const actions = g.actions || [];
+      return `
+        <div class="group-item" id="group-${gname}">
+          <div class="group-header" onclick="toggleGroup('${gname}')">
+            <div class="group-name">
+              ⬡ ${gname}
+              <span class="group-count">${actions.length} action${actions.length !== 1 ? 's' : ''}</span>
+            </div>
+            <span class="group-chevron">›</span>
+          </div>
+          <div class="group-body">
+            ${actions.length === 0 ? '<div style="font-size:0.62rem;color:rgba(255,255,255,0.15);letter-spacing:2px;padding:8px 0;">No actions in this group</div>' : ''}
+            ${actions.map(a => `
+              <div class="group-action-row">
+                <span>${a.name}</span>
+                <span style="color:rgba(208,240,255,0.4);font-size:0.62rem;">${a.trigger || ''}</span>
+                ${a.onFail ? `<span style="font-size:0.58px;color:rgba(255,200,80,0.4);">fail→${a.onFail}</span>` : ''}
+                <button class="delete-btn" onclick="removeFromGroup('${gname}','${a.name}')">×</button>
+              </div>
+            `).join('')}
+            <button class="delete-btn" style="margin-top:8px;align-self:flex-start;" onclick="deleteGroup('${gname}')">Delete Group</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function toggleGroup(name) {
+    document.getElementById('group-' + name).classList.toggle('open');
+  }
+
+  function refreshGroupSelects() {
+    const gSel = document.getElementById('groupSelectForAction');
+    const aSel = document.getElementById('actionSelectForGroup');
+    const fSel = document.getElementById('failActionSelect');
+
+    const gKeys = Object.keys(groupsCache);
+    const aKeys = Object.keys(actionsCache);
+
+    gSel.innerHTML = '<option value="">Select group...</option>' +
+      gKeys.map(g => `<option value="${g}">${g}</option>`).join('');
+
+    aSel.innerHTML = '<option value="">Select action...</option>' +
+      aKeys.map(a => `<option value="${a}">${a} (${actionsCache[a].trigger || ''})</option>`).join('');
+
+    fSel.innerHTML = '<option value="">None</option>' +
+      aKeys.map(a => `<option value="${a}">${a}</option>`).join('');
+  }
+
+  async function createGroup() {
+    const name = document.getElementById('groupNameInput').value.trim();
+    if (!name) { showToast('Enter a group name'); return; }
+    await fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, actions: [] })
+    });
+    document.getElementById('groupNameInput').value = '';
+    showToast('Group created');
+    await loadGroups();
+    refreshGroupSelects();
+  }
+
+  async function addActionToGroup() {
+    const group = document.getElementById('groupSelectForAction').value;
+    const action = document.getElementById('actionSelectForGroup').value;
+    const onFail = document.getElementById('failActionSelect').value;
+    if (!group || !action) { showToast('Select a group and action'); return; }
+    const g = groupsCache[group];
+    g.actions = g.actions || [];
+    if (g.actions.find(a => a.name === action)) { showToast('Already in group'); return; }
+    g.actions.push({ name: action, trigger: actionsCache[action]?.trigger || '', onFail });
+    await fetch(`/api/groups/${encodeURIComponent(group)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(g)
+    });
+    showToast('Added to group');
+    await loadGroups();
+  }
+
+  async function removeFromGroup(group, actionName) {
+    const g = groupsCache[group];
+    g.actions = g.actions.filter(a => a.name !== actionName);
+    await fetch(`/api/groups/${encodeURIComponent(group)}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(g)
+    });
+    showToast('Removed from group');
+    await loadGroups();
+  }
+
+  async function deleteGroup(name) {
+    await fetch(`/api/groups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    showToast('Group deleted');
+    await loadGroups();
+  }
+
+  // ---- INIT ----
   loadCommands();
+  loadActions();
+  loadGroups();
+  checkBotStatus();
+  setInterval(checkBotStatus, 4000);
 </script>
 </body>
 </html>
