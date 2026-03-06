@@ -52,9 +52,13 @@ std::string compileAction(const std::string& actionName, const std::string& code
     std::ofstream src(srcPath);
     if (!src.is_open()) return "ERROR: Could not write source file";
 
-    src << "#include <iostream>\n";
-    src << "#include <string>\n";
-    src << "#include <windows.h>\n\n";
+   src << "#include <iostream>\n";
+src << "#include <string>\n";
+src << "#include <windows.h>\n";
+src << "#include <winsock2.h>\n";
+src << "#include <cstdlib>\n";
+src << "#include <ctime>\n";
+src << "#include <sstream>\n\n";
     src << "int main(int argc, char* argv[]) {\n";
     src << "    std::string username = argc > 1 ? argv[1] : \"\";\n";
     src << "    std::string message  = argc > 2 ? argv[2] : \"\";\n";
