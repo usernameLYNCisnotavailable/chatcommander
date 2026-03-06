@@ -51,6 +51,7 @@ function startReactor() {
 }
 
 function startBot() {
+    console.log('startBot called');
     const botPath = app.isPackaged
         ? path.join(process.resourcesPath, 'app.asar', 'index.js')
         : path.join(__dirname, 'index.js');
@@ -61,7 +62,7 @@ function startBot() {
     getDataPath('commands.json');
 
     const config = JSON.parse(fs.readFileSync(path.join(userDataPath, 'config.json'), 'utf8'));
-
+console.log('Config at startBot:', JSON.stringify(config));
     if (!config.setupComplete) {
         console.log('Setup not complete, bot will not start yet.');
         return;
