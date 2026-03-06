@@ -39,7 +39,6 @@ client.connect().catch(err => {
 });
 
 // ---- Reply listener on port 9001 ----
-// C++ actions connect here to send messages back into chat
 const replyServer = net.createServer((socket) => {
     let data = '';
     socket.on('data', (chunk) => { data += chunk.toString(); });
@@ -56,6 +55,36 @@ const replyServer = net.createServer((socket) => {
 replyServer.listen(9001, '127.0.0.1', () => {
     console.log('Bot reply listener running on port 9001');
 });
+
+// ---- Auto $50/hr bank bonus ----
+function giveHourlyBonus() {
+    const memPath = path.join(dataDir, 'memory.json');
+    if (!fs.existsSync(memPath)) return;
+
+    let mem = {};
+    try { mem = JSON.parse(fs.readFileSync(memPath, 'utf8')); } catch(e) { return; }
+
+    let changed = false;
+    for (const key of Object.keys(mem)) {
+        if (key.startsWith('bank_')) {
+            const user = key.slice(5);
+            const current = parseInt(mem[key]) || 0;
+            mem[key] = String(current + 50);
+            changed = true;
+            console.log(`[bank] Hourly bonus +$50 to ${user} (bank: ${mem[key]})`);
+        }
+    }
+
+    if (changed) {
+        fs.writeFileSync(memPath, JSON.stringify(mem, null, 4));
+    }
+}
+
+// Run 1 minute after bot starts, then every hour
+setTimeout(() => {
+    giveHourlyBonus();
+    setInterval(giveHourlyBonus, 60 * 60 * 1000);
+}, 60 * 1000);
 
 // ---- Chat handler ----
 client.on('message', (channel, tags, message, self) => {
@@ -76,10 +105,10 @@ client.on('message', (channel, tags, message, self) => {
         client.say(channel, commands[command].response);
     }
 
-    // C++ actions — strip ! so "!time" matches action named "time"
-    const actionKey = command.startsWith('!') ? command.slice(1) : command;
-    if (actions[actionKey]) {
-        const reactorMsg = `COMMAND:${actionKey}:${username}:${message}:${args}`;
+    // C++ actions — only trigger if message starts with !
+    const actionKey = command.startsWith('!') ? command.slice(1) : null;
+    if (actionKey && actions[actionKey]) {
+        const reactorMsg = `COMMAND:${actionKey}:${username}:${message}:${args}:${config.channel}`;
         sendToReactor(reactorMsg);
     }
 

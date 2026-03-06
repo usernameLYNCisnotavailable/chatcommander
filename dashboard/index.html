@@ -49,10 +49,8 @@
   }
   @keyframes lines-move { from { background-position: 0 0; } to { background-position: 200px 200px; } }
 
-  /* Layout */
   .app { position: relative; z-index: 2; display: grid; grid-template-columns: 220px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
 
-  /* Header */
   .header {
     grid-column: 1 / -1;
     display: flex; align-items: center; justify-content: space-between;
@@ -91,7 +89,6 @@
   .bot-pill-text { font-size: 0.58rem; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
   .version { font-size: 0.52rem; letter-spacing: 2px; color: rgba(255,255,255,0.12); }
 
-  /* Sidebar */
   .sidebar {
     border-right: 1px solid var(--border);
     padding: 20px 12px;
@@ -109,13 +106,9 @@
     border: 1px solid transparent;
   }
   .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
-  .nav-item.active {
-    background: rgba(255,255,255,0.06); color: var(--text);
-    border-color: rgba(255,255,255,0.1);
-  }
+  .nav-item.active { background: rgba(255,255,255,0.06); color: var(--text); border-color: rgba(255,255,255,0.1); }
   .nav-icon { font-size: 0.85rem; width: 18px; text-align: center; opacity: 0.6; }
 
-  /* Main */
   .main { overflow-y: auto; display: flex; flex-direction: column; }
   .main::-webkit-scrollbar { width: 4px; }
   .main::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
@@ -127,7 +120,6 @@
   .page-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 30%, rgba(255,255,255,0.35)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   .page-sub { font-size: 0.56rem; letter-spacing: 3px; color: rgba(255,255,255,0.18); text-transform: uppercase; margin-top: 4px; }
 
-  /* Cards */
   .card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; padding: 20px; position: relative; overflow: hidden;
@@ -137,7 +129,6 @@
   .card-title { font-size: 0.56rem; letter-spacing: 4px; color: rgba(255,255,255,0.25); text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
   .card-title::before { content: ''; width: 14px; height: 1px; background: linear-gradient(90deg, var(--holo-1), var(--holo-3)); }
 
-  /* Forms */
   .form-group { margin-bottom: 14px; }
   .form-label { display: block; font-size: 0.54rem; letter-spacing: 3px; color: rgba(255,255,255,0.22); text-transform: uppercase; margin-bottom: 7px; }
   .form-input {
@@ -148,7 +139,6 @@
   .form-input::placeholder { color: rgba(255,255,255,0.12); }
   .form-input:focus { border-color: rgba(255,255,255,0.18); background: rgba(255,255,255,0.02); box-shadow: 0 0 0 3px rgba(255,255,255,0.03); }
 
-  /* Buttons */
   .btn {
     width: 100%; padding: 11px; background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1); border-radius: 6px;
@@ -165,14 +155,12 @@
   .btn-blue { border-color: rgba(208,240,255,0.25); color: var(--accent); }
   .btn-blue:hover { border-color: rgba(208,240,255,0.4); background: rgba(208,240,255,0.05); }
 
-  /* Stats */
   .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; position: relative; overflow: hidden; }
   .stat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); }
   .stat-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; background: linear-gradient(135deg, #fff, rgba(255,255,255,0.4)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1; margin-bottom: 5px; }
   .stat-label { font-size: 0.52rem; letter-spacing: 3px; color: rgba(255,255,255,0.18); text-transform: uppercase; }
 
-  /* Command list */
   .command-list { display: flex; flex-direction: column; gap: 6px; max-height: 460px; overflow-y: auto; }
   .command-list::-webkit-scrollbar { width: 3px; }
   .command-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
@@ -192,7 +180,6 @@
 
   .empty { text-align: center; padding: 36px 20px; font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.1); text-transform: uppercase; }
 
-  /* ---- ACTIONS PAGE ---- */
   .actions-grid { display: grid; grid-template-columns: 280px 1fr; gap: 16px; align-items: start; flex: 1; min-height: 0; }
 
   .action-list { display: flex; flex-direction: column; gap: 6px; max-height: 420px; overflow-y: auto; }
@@ -209,41 +196,36 @@
   .action-row { display: flex; align-items: center; justify-content: space-between; }
   .action-name { font-size: 0.76rem; color: rgba(255,255,255,0.82); }
   .action-trigger { font-size: 0.6rem; color: rgba(208,240,255,0.45); letter-spacing: 1px; }
-  .action-badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 0.5rem; letter-spacing: 2px; text-transform: uppercase;
-    margin-top: 5px;
-  }
+  .action-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.5rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
   .action-badge-dot { width: 4px; height: 4px; border-radius: 50%; }
   .badge-ok .action-badge-dot { background: var(--green); box-shadow: 0 0 5px var(--green); }
   .badge-ok { color: rgba(79,255,176,0.55); }
   .badge-pending .action-badge-dot { background: rgba(255,200,80,0.7); }
   .badge-pending { color: rgba(255,200,80,0.5); }
 
-  /* Editor panel (inline) */
+  /* Editor panel */
   .editor-panel {
-    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08);
+    background: #1e1e1e; border: 1px solid rgba(255,255,255,0.08);
     border-radius: 10px; display: flex; flex-direction: column; overflow: hidden;
-    min-height: 480px;
+    min-height: 520px;
   }
 
   .editor-topbar {
     display: flex; align-items: center; justify-content: space-between;
     padding: 10px 16px;
-    background: rgba(255,255,255,0.02);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    background: #252526;
+    border-bottom: 1px solid #3c3c3c;
     flex-shrink: 0;
   }
-  .editor-breadcrumb { font-size: 0.6rem; letter-spacing: 2px; color: rgba(255,255,255,0.25); display: flex; align-items: center; gap: 8px; }
+  .editor-breadcrumb { font-size: 0.6rem; letter-spacing: 2px; color: rgba(255,255,255,0.4); display: flex; align-items: center; gap: 8px; }
   .editor-breadcrumb span { color: var(--accent); opacity: 0.7; }
   .editor-btns { display: flex; gap: 6px; }
 
-  /* Includes hint bar */
   .includes-bar {
-    padding: 8px 16px;
-    background: rgba(208,240,255,0.03);
+    padding: 7px 16px;
+    background: #1a1a2e;
     border-bottom: 1px solid rgba(208,240,255,0.06);
-    font-size: 0.56rem;
+    font-size: 0.55rem;
     color: rgba(208,240,255,0.3);
     letter-spacing: 1px;
     flex-shrink: 0;
@@ -251,39 +233,38 @@
   }
   .includes-bar strong { color: rgba(208,240,255,0.5); }
 
-  /* Variables bar */
   .vars-bar {
     display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    padding: 8px 16px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    padding: 7px 16px;
+    background: #1e1e1e;
+    border-bottom: 1px solid #3c3c3c;
     flex-shrink: 0;
   }
   .vars-label { font-size: 0.52rem; letter-spacing: 3px; color: rgba(255,255,255,0.18); text-transform: uppercase; }
   .var-chip { font-size: 0.6rem; padding: 3px 9px; border: 1px solid rgba(208,240,255,0.14); border-radius: 3px; color: rgba(208,240,255,0.5); }
 
-  .code-editor {
-    flex: 1; width: 100%; background: transparent; border: none;
-    color: #c8e6ff; font-family: 'DM Mono', monospace; font-size: 0.8rem;
-    line-height: 1.75; padding: 16px; outline: none; resize: none; tab-size: 4;
-    min-height: 280px;
+  /* Monaco containers */
+  .monaco-container {
+    flex: 1;
+    min-height: 300px;
+    position: relative;
   }
 
   .compile-output {
     margin: 0; padding: 10px 16px; font-size: 0.65rem; line-height: 1.6;
     white-space: pre-wrap; word-break: break-all; display: none; flex-shrink: 0;
-    border-top: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid #3c3c3c;
   }
   .compile-output.success { display: block; background: rgba(79,255,176,0.05); color: rgba(79,255,176,0.75); }
   .compile-output.error { display: block; background: rgba(255,80,80,0.05); color: rgba(255,120,120,0.9); }
   .compile-output.loading { display: block; background: transparent; color: rgba(255,255,255,0.25); }
 
-  /* Editor empty state */
   .editor-empty { display: flex; align-items: center; justify-content: center; flex: 1; min-height: 480px; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; }
   .editor-empty-inner { text-align: center; }
   .editor-empty-icon { font-size: 2.5rem; opacity: 0.08; margin-bottom: 12px; }
   .editor-empty-text { font-size: 0.56rem; letter-spacing: 3px; color: rgba(255,255,255,0.12); text-transform: uppercase; }
 
-  /* ---- FULLSCREEN EDITOR MODAL ---- */
+  /* Modal */
   .modal-overlay {
     position: fixed; inset: 0; z-index: 1000;
     background: rgba(0,0,0,0.85);
@@ -294,8 +275,8 @@
   .modal-overlay.open { display: flex; }
 
   .modal {
-    width: 100%; max-width: 960px; height: 85vh;
-    background: #0c0c0c; border: 1px solid rgba(255,255,255,0.1);
+    width: 100%; max-width: 1100px; height: 88vh;
+    background: #1e1e1e; border: 1px solid rgba(255,255,255,0.1);
     border-radius: 14px; display: flex; flex-direction: column;
     overflow: hidden; box-shadow: 0 40px 120px rgba(0,0,0,0.8);
     animation: modal-in 0.2s ease;
@@ -304,9 +285,9 @@
 
   .modal-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    background: rgba(255,255,255,0.02);
+    padding: 12px 20px;
+    border-bottom: 1px solid #3c3c3c;
+    background: #252526;
     flex-shrink: 0;
   }
   .modal-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 700; letter-spacing: 1px; color: rgba(255,255,255,0.8); }
@@ -314,23 +295,23 @@
   .modal-close:hover { border-color: rgba(255,80,80,0.4); color: rgba(255,80,80,0.7); background: rgba(255,80,80,0.05); }
 
   .modal-includes {
-    padding: 8px 20px;
-    background: rgba(208,240,255,0.02);
+    padding: 7px 20px;
+    background: #1a1a2e;
     border-bottom: 1px solid rgba(208,240,255,0.06);
-    font-size: 0.56rem; color: rgba(208,240,255,0.3); letter-spacing: 1px; line-height: 1.8;
+    font-size: 0.55rem; color: rgba(208,240,255,0.3); letter-spacing: 1px; line-height: 1.8;
     flex-shrink: 0;
   }
   .modal-includes strong { color: rgba(208,240,255,0.5); }
 
-  .modal-vars { display: flex; align-items: center; gap: 8px; padding: 8px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); flex-shrink: 0; }
+  .modal-vars { display: flex; align-items: center; gap: 8px; padding: 7px 20px; border-bottom: 1px solid #3c3c3c; background: #1e1e1e; flex-shrink: 0; }
 
-  .modal-editor { flex: 1; width: 100%; background: transparent; border: none; color: #c8e6ff; font-family: 'DM Mono', monospace; font-size: 0.85rem; line-height: 1.8; padding: 20px; outline: none; resize: none; tab-size: 4; }
+  .modal-monaco { flex: 1; min-height: 0; position: relative; }
 
   .modal-footer {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 20px;
-    border-top: 1px solid rgba(255,255,255,0.07);
-    background: rgba(255,255,255,0.01);
+    padding: 10px 20px;
+    border-top: 1px solid #3c3c3c;
+    background: #252526;
     flex-shrink: 0;
   }
   .modal-output { font-size: 0.62rem; color: rgba(255,255,255,0.25); flex: 1; margin-right: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -352,7 +333,6 @@
   .group-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.04); border-radius: 5px; font-size: 0.68rem; color: rgba(255,255,255,0.45); }
   .group-row-right { display: flex; align-items: center; gap: 8px; }
 
-  /* Toast */
   .toast { position: fixed; bottom: 24px; right: 24px; background: rgba(16,16,16,0.96); border: 1px solid rgba(255,255,255,0.08); border-radius: 7px; padding: 10px 18px; font-size: 0.62rem; letter-spacing: 2px; color: rgba(255,255,255,0.65); opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; backdrop-filter: blur(20px); z-index: 9999; }
   .toast.show { opacity: 1; transform: translateY(0); }
 
@@ -366,7 +346,6 @@
 <div class="holo-lines"></div>
 
 <div class="app">
-  <!-- Header -->
   <header class="header">
     <div class="logo">CHAT COMMANDER</div>
     <div class="header-right">
@@ -378,7 +357,6 @@
     </div>
   </header>
 
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="nav-section">Menu</div>
     <div class="nav-item active" id="nav-commands" onclick="showPage('commands')">
@@ -392,7 +370,6 @@
     </div>
   </aside>
 
-  <!-- Main -->
   <main class="main">
 
     <!-- COMMANDS PAGE -->
@@ -447,7 +424,6 @@
       </div>
 
       <div class="actions-grid">
-        <!-- Left column -->
         <div style="display:flex;flex-direction:column;gap:14px;">
           <div class="card">
             <div class="card-title">New Action</div>
@@ -461,7 +437,6 @@
             </div>
             <button class="btn" onclick="createAction()">Create Action</button>
           </div>
-
           <div class="card" style="padding:18px;">
             <div class="card-title">Your Actions</div>
             <div class="action-list" id="actionList">
@@ -470,7 +445,7 @@
           </div>
         </div>
 
-        <!-- Right column: editor -->
+        <!-- Right: Monaco editor panel -->
         <div id="editorPanel" style="display:none;">
           <div class="editor-panel">
             <div class="editor-topbar">
@@ -484,15 +459,16 @@
             </div>
             <div class="includes-bar">
               <strong>Auto-included:</strong>
-              // #include &lt;iostream&gt; &nbsp;|&nbsp; #include &lt;string&gt; &nbsp;|&nbsp; #include &lt;windows.h&gt; &nbsp;|&nbsp; #include &lt;winsock2.h&gt; &nbsp;|&nbsp; #include &lt;cstdlib&gt; &nbsp;|&nbsp; #include &lt;ctime&gt; &nbsp;|&nbsp; #include &lt;sstream&gt;
+              #include &lt;iostream&gt; &nbsp;|&nbsp; #include &lt;string&gt; &nbsp;|&nbsp; #include &lt;fstream&gt; &nbsp;|&nbsp; #include &lt;sstream&gt; &nbsp;|&nbsp; #include &lt;vector&gt; &nbsp;|&nbsp; #include &lt;algorithm&gt; &nbsp;|&nbsp; #include &lt;winsock2.h&gt; &nbsp;|&nbsp; #include &lt;windows.h&gt; &nbsp;|&nbsp; #include &lt;cstdlib&gt; &nbsp;|&nbsp; #include &lt;ctime&gt;
             </div>
             <div class="vars-bar">
               <span class="vars-label">Variables</span>
               <span class="var-chip">username</span>
               <span class="var-chip">message</span>
               <span class="var-chip">args</span>
+              <span class="var-chip">channel</span>
             </div>
-            <textarea class="code-editor" id="codeEditor" spellcheck="false" placeholder="// Write your C++ here&#10;// username, message, args are available as std::string"></textarea>
+            <div class="monaco-container" id="monacoInline"></div>
             <div class="compile-output" id="compileOutput"></div>
           </div>
         </div>
@@ -559,15 +535,16 @@
     </div>
     <div class="modal-includes">
       <strong>Auto-included:</strong>
-      // #include &lt;iostream&gt; &nbsp;|&nbsp; #include &lt;string&gt; &nbsp;|&nbsp; #include &lt;windows.h&gt; &nbsp;|&nbsp; #include &lt;winsock2.h&gt; &nbsp;|&nbsp; #include &lt;cstdlib&gt; &nbsp;|&nbsp; #include &lt;ctime&gt; &nbsp;|&nbsp; #include &lt;sstream&gt;
+      #include &lt;iostream&gt; &nbsp;|&nbsp; #include &lt;string&gt; &nbsp;|&nbsp; #include &lt;fstream&gt; &nbsp;|&nbsp; #include &lt;sstream&gt; &nbsp;|&nbsp; #include &lt;vector&gt; &nbsp;|&nbsp; #include &lt;algorithm&gt; &nbsp;|&nbsp; #include &lt;winsock2.h&gt; &nbsp;|&nbsp; #include &lt;windows.h&gt; &nbsp;|&nbsp; #include &lt;cstdlib&gt; &nbsp;|&nbsp; #include &lt;ctime&gt;
     </div>
     <div class="modal-vars">
       <span class="vars-label">Variables</span>
       <span class="var-chip">username</span>
       <span class="var-chip">message</span>
       <span class="var-chip">args</span>
+      <span class="var-chip">channel</span>
     </div>
-    <textarea class="modal-editor" id="modalEditor" spellcheck="false"></textarea>
+    <div class="modal-monaco" id="monacoModal"></div>
     <div class="modal-footer">
       <div class="modal-output" id="modalOutput">Ready</div>
       <div class="modal-btns">
@@ -581,7 +558,100 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Monaco Editor loader -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
 <script>
+  // ---- MONACO SETUP ----
+  let inlineEditor = null;
+  let modalEditor = null;
+  let monacoReady = false;
+
+  require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs' } });
+
+  require(['vs/editor/editor.main'], function() {
+    monacoReady = true;
+
+    // Define a custom dark theme matching the app
+    monaco.editor.defineTheme('chatcommander', {
+      base: 'vs-dark',
+      inherit: true,
+      rules: [
+        { token: 'comment', foreground: '6A9955', fontStyle: 'italic' },
+        { token: 'keyword', foreground: '569CD6', fontStyle: 'bold' },
+        { token: 'string', foreground: 'CE9178' },
+        { token: 'number', foreground: 'B5CEA8' },
+        { token: 'type', foreground: '4EC9B0' },
+        { token: 'function', foreground: 'DCDCAA' },
+        { token: 'variable', foreground: '9CDCFE' },
+        { token: 'operator', foreground: 'D4D4D4' },
+      ],
+      colors: {
+        'editor.background': '#1e1e1e',
+        'editor.foreground': '#D4D4D4',
+        'editorLineNumber.foreground': '#5A5A5A',
+        'editorLineNumber.activeForeground': '#C6C6C6',
+        'editor.selectionBackground': '#264F78',
+        'editor.lineHighlightBackground': '#2A2A2A',
+        'editorCursor.foreground': '#AEAFAD',
+        'editor.inactiveSelectionBackground': '#3A3D41',
+        'scrollbarSlider.background': '#3E3E3E',
+        'scrollbarSlider.hoverBackground': '#555555',
+      }
+    });
+
+    // Create inline editor
+    inlineEditor = monaco.editor.create(document.getElementById('monacoInline'), {
+      value: '// Select an action to start editing',
+      language: 'cpp',
+      theme: 'chatcommander',
+      fontSize: 13,
+      fontFamily: "'DM Mono', 'Cascadia Code', 'Fira Code', monospace",
+      fontLigatures: true,
+      lineNumbers: 'on',
+      minimap: { enabled: false },
+      scrollBeyondLastLine: false,
+      automaticLayout: true,
+      tabSize: 4,
+      insertSpaces: true,
+      wordWrap: 'off',
+      renderLineHighlight: 'line',
+      cursorBlinking: 'smooth',
+      smoothScrolling: true,
+      padding: { top: 12, bottom: 12 },
+      bracketPairColorization: { enabled: true },
+      suggest: { showKeywords: true },
+    });
+
+    // Create modal editor
+    modalEditor = monaco.editor.create(document.getElementById('monacoModal'), {
+      value: '',
+      language: 'cpp',
+      theme: 'chatcommander',
+      fontSize: 14,
+      fontFamily: "'DM Mono', 'Cascadia Code', 'Fira Code', monospace",
+      fontLigatures: true,
+      lineNumbers: 'on',
+      minimap: { enabled: true },
+      scrollBeyondLastLine: false,
+      automaticLayout: true,
+      tabSize: 4,
+      insertSpaces: true,
+      wordWrap: 'off',
+      renderLineHighlight: 'line',
+      cursorBlinking: 'smooth',
+      smoothScrolling: true,
+      padding: { top: 16, bottom: 16 },
+      bracketPairColorization: { enabled: true },
+      suggest: { showKeywords: true },
+    });
+  });
+
+  // Helper to get/set editor values
+  function getInlineCode() { return inlineEditor ? inlineEditor.getValue() : ''; }
+  function setInlineCode(code) { if (inlineEditor) inlineEditor.setValue(code || ''); }
+  function getModalCode() { return modalEditor ? modalEditor.getValue() : ''; }
+  function setModalCode(code) { if (modalEditor) modalEditor.setValue(code || ''); }
+
   // ---- NAV ----
   function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -589,6 +659,7 @@
     document.getElementById('page-' + name).classList.add('active');
     document.getElementById('nav-' + name).classList.add('active');
     if (name === 'groups') refreshGroupSelects();
+    if (name === 'actions' && inlineEditor) setTimeout(() => inlineEditor.layout(), 50);
   }
 
   function showToast(msg) {
@@ -699,10 +770,11 @@
     document.getElementById('editorPanel').style.display = 'block';
     document.getElementById('editorEmpty').style.display = 'none';
     document.getElementById('editorActionName').textContent = name;
-    document.getElementById('codeEditor').value = a.code || '';
+    setInlineCode(a.code || '');
     document.getElementById('compileOutput').className = 'compile-output';
     document.getElementById('compileOutput').textContent = '';
     renderActionList();
+    if (inlineEditor) setTimeout(() => inlineEditor.layout(), 50);
   }
 
   async function createAction() {
@@ -710,7 +782,6 @@
     const trigger = document.getElementById('actionTriggerInput').value.trim();
     if (!name) { showToast('Enter an action name'); return; }
     if (!trigger.startsWith('!')) { showToast('Trigger must start with !'); return; }
-    const defaultCode = '// username, message, and args are std::string variables\n// Send reply to chat:\n// sendToChat("your message here");\n\nstd::string reply = username + " triggered this action!";\n// To say something in chat, connect to port 9001:\nWSDTA wsa;\nWSAStartup(MAKEWORD(2,2), &wsa);\nSOCKET s = socket(AF_INET, SOCK_STREAM, 0);\nsockaddr_in addr;\naddr.sin_family = AF_INET;\naddr.sin_port = htons(9001);\naddr.sin_addr.s_addr = inet_addr("127.0.0.1");\nconnect(s, (sockaddr*)&addr, sizeof(addr));\nsend(s, reply.c_str(), reply.size(), 0);\nclosesocket(s);\nWSACleanup();';
     await fetch('/api/actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, trigger, code: '', compiled: false }) });
     document.getElementById('actionNameInput').value = '';
     document.getElementById('actionTriggerInput').value = '';
@@ -721,7 +792,7 @@
 
   async function compileAction() {
     if (!currentAction) return;
-    const code = document.getElementById('codeEditor').value;
+    const code = getInlineCode();
     setCompileOutput('loading', 'Compiling...');
     await fetch(`/api/actions/${encodeURIComponent(currentAction)}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code }) });
     const res = await fetch('/api/actions/compile', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: currentAction, code }) });
@@ -756,6 +827,7 @@
     currentAction = null;
     document.getElementById('editorPanel').style.display = 'none';
     document.getElementById('editorEmpty').style.display = 'flex';
+    setInlineCode('');
     showToast('Action deleted');
     loadActions();
   }
@@ -765,23 +837,23 @@
     if (!currentAction) return;
     const a = actionsCache[currentAction];
     document.getElementById('modalTitle').textContent = currentAction + ' — ' + (a.trigger || '');
-    document.getElementById('modalEditor').value = document.getElementById('codeEditor').value;
+    setModalCode(getInlineCode());
     document.getElementById('modalOutput').textContent = 'Ready';
     document.getElementById('modalOutput').className = 'modal-output';
     document.getElementById('modalOverlay').classList.add('open');
+    if (modalEditor) setTimeout(() => modalEditor.layout(), 50);
   }
 
   function closeModal() {
     // Sync modal code back to inline editor
-    const modalCode = document.getElementById('modalEditor').value;
-    document.getElementById('codeEditor').value = modalCode;
+    setInlineCode(getModalCode());
     document.getElementById('modalOverlay').classList.remove('open');
   }
 
   async function compileFromModal() {
     if (!currentAction) return;
-    const code = document.getElementById('modalEditor').value;
-    document.getElementById('codeEditor').value = code;
+    const code = getModalCode();
+    setInlineCode(code);
     const outputEl = document.getElementById('modalOutput');
     outputEl.textContent = 'Compiling...';
     outputEl.className = 'modal-output';
@@ -803,22 +875,8 @@
     }
   }
 
-  // Close modal on overlay click
   document.getElementById('modalOverlay').addEventListener('click', (e) => {
     if (e.target === document.getElementById('modalOverlay')) closeModal();
-  });
-
-  // Tab key in editors
-  ['codeEditor', 'modalEditor'].forEach(id => {
-    document.getElementById(id).addEventListener('keydown', (e) => {
-      if (e.key === 'Tab') {
-        e.preventDefault();
-        const el = e.target;
-        const start = el.selectionStart;
-        el.value = el.value.substring(0, start) + '    ' + el.value.substring(el.selectionEnd);
-        el.selectionStart = el.selectionEnd = start + 4;
-      }
-    });
   });
 
   // ---- GROUPS ----

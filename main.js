@@ -360,7 +360,7 @@ function createWindow() {
 app.whenReady().then(() => {
     require('dotenv').config({
         path: app.isPackaged
-            ? path.join(process.resourcesPath, 'app', '.env')
+            ? path.join(process.resourcesPath, '.env')
             : path.join(__dirname, '.env')
     });
     startServer();

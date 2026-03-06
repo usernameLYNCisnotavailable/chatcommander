@@ -30,11 +30,9 @@
     "!node_modules/.cache/**"
 ],
     "extraResources": [
-      {
-        "from": "reactor.exe",
-        "to": "reactor.exe"
-      }
-    ]
+  { "from": "reactor.exe", "to": "reactor.exe" },
+  { "from": ".env", "to": ".env" }
+]
   },
   "keywords": [],
   "author": "",

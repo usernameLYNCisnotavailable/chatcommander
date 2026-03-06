@@ -482,8 +482,7 @@
     }
   }
 
-  function nextStep(step) {
-    const inputs = ['botUsername'];
+  async function nextStep(step) {
     if (step === 0) {
       const val = document.getElementById('botUsername').value.trim();
       if (!val) {
@@ -491,6 +490,12 @@
         return;
       }
       document.getElementById('error0').style.display = 'none';
+      // Save botUsername before redirect so it survives OAuth
+      await fetch('/api/setup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ botUsername: val, token: '', channel: '', setupComplete: false })
+      });
     }
     goToStep(step + 1);
   }
